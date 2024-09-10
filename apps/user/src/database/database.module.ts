@@ -10,7 +10,7 @@ export class DatabaseModule {
       providers: [
         {
           provide: KyselyService,
-          useFactory: () => new KyselyService(databaseUrl, 'postgres'),
+          useFactory: () => new KyselyService('postgres', { databaseUrl }),
         },
       ],
       exports: [KyselyService],

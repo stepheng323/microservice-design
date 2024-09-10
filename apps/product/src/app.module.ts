@@ -7,15 +7,28 @@ import { DatabaseModule } from './database/database';
 import { config } from './config'
 import { ProductModule } from './product/product.module';
 import { RepositoryModule } from './repo/repo.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from '@lib/utils';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true, load: [config]}),
-    DatabaseModule.forRoot(process.env.DATABASE_URL),
+    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    DatabaseModule.forRoot({
+      database: process.env.DB_NAME,
+      host: process.env.DB_HOST,
+      password: process.env.DB_PASSWORD,
+      user: process.env.DB_USER
+    }),
     ProductModule,
     RepositoryModule,
   ],
   controllers: [ProductController],
-  providers: [ProductService],
+  providers: [
+    ProductService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule { }

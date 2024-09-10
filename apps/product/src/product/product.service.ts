@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { IServiceHelper } from '@lib/types';
 import { ProductRepo } from '../repo/product';
-import { CreateProductDto } from '@lib/schema';
+import { CreateProductDto, UpdateProductDto } from '@lib/schema';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly productRepository: ProductRepo) {
   }
   async create(productDto: CreateProductDto): Promise<IServiceHelper> {
-    const product = await this.productRepository.createProduct(productDto)
+    await this.productRepository.createProduct(productDto)
     return {
       status: 'created',
-      message: 'Welcome to product service',
-      data: product
+      message: 'Product created successfully',
     };
   }
 
@@ -36,6 +35,15 @@ export class ProductService {
       status: 'successful',
       message: 'Products fetched successfully',
       data: products
+    }
+  }
+
+  async updateProduct(id: string, body: UpdateProductDto): Promise<IServiceHelper> {
+    const updatedProduct = await this.productRepository.updateProduct(id, body)
+    return {
+      status: 'successful',
+      message: 'Product updated successfully',
+      data: updatedProduct
     }
   }
 }
