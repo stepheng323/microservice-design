@@ -14,7 +14,13 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@lib/database": ["libs/database/src/index.ts"],
+      "@lib/helper": ["libs/helper/src/index.ts"],
+      "@lib/schema": ["libs/schema/src/index.ts"],
+      "@lib/types": ["libs/types/src/index.ts"],
+      "@lib/utils": ["libs/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

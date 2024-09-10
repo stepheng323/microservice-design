@@ -1,10 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
@@ -38,7 +35,12 @@
         "targetName": "test"
       },
       "exclude": [
-        "apps/nestjs-scaffold-e2e/**/*"
+        "apps/nestjs-scaffold-e2e/**/*",
+        "apps/my-nest-app-e2e/**/*",
+        "user-e2e/**/*",
+        "apps/user-e2e/**/*",
+        "apps/user/apps/product-e2e/**/*",
+        "apps/product-e2e/**/*"
       ]
     }
   ]
