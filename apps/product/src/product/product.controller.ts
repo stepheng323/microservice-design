@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, Res, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Res, UseGuards, UsePipes } from '@nestjs/common';
 import {Response} from 'express'
 import { ProductService } from './product.service';
 import { convertResponse } from '@lib/helper';
@@ -26,6 +26,7 @@ export class ProductController {
     const data = await this.appService.fetchProduct(id);
     return convertResponse(res, data)
   }
+
   @Get()
   async getProducts(
     @Res() res: Response,
@@ -36,7 +37,6 @@ export class ProductController {
 
   @Put(':id')
   async updateProduct(
-    @Req() req: Request,
     @Res() res: Response,
     @Body(new ZodValidationPipe(updateProductSchema)) body: UpdateProductDto,
     @Param('id') id: string) {
