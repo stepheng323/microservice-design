@@ -4,7 +4,12 @@ import { KyselyService } from '@lib/database'
 @Global()
 @Module({})
 export class DatabaseModule {
-  static forRoot(databaseConfig: { host: string; user: string, database: string; password: string }): DynamicModule {
+  static forRoot(databaseConfig: {
+    host: string;
+    user: string;
+    database: string;
+    password: string
+  }): DynamicModule {
     return {
       module: DatabaseModule,
       providers: [

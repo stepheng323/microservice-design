@@ -24,11 +24,11 @@ export const getErrorMessage = <T>(exception: T): string => {
 @Catch()
 export class GlobalExceptionFilter<T> implements ExceptionFilter {
   catch(exception: T, host: ArgumentsHost) {
+    console.log(exception);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const statusCode = getStatusCode<T>(exception);
     const errorMessage = getErrorMessage<T>(exception);
-    console.log(exception);
     if (exception instanceof NoResultError) {
       return response.status(404).send({
         status: false,

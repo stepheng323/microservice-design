@@ -1,21 +1,29 @@
-import { Body, Controller, Get, Param, Post, Put, Res, UseGuards, UsePipes } from '@nestjs/common';
-import {Response} from 'express'
+import { Body, Controller, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express'
 import { ProductService } from './product.service';
 import { convertResponse } from '@lib/helper';
 import { AuthGuard, ZodValidationPipe } from '@lib/utils';
-import { CreateProductDto, createProductSchema, UpdateProductDto, updateProductSchema } from '@lib/schema';
+import {
+  CreateProductDto,
+  createProductSchema,
+  UpdateProductDto,
+  updateProductSchema
+} from '@lib/schema';
+import { CurrentUser } from '@lib/helper';
+import { UserPayload } from '@lib/types';
 
-@UseGuards(AuthGuard)
-@Controller('product')
+@Controller('')
 export class ProductController {
-  constructor(private readonly appService: ProductService) {}
+  constructor(private readonly appService: ProductService) { }
 
   @Post()
-  @UsePipes(new ZodValidationPipe(createProductSchema))
+  @UseGuards(AuthGuard)
   async createProduct(
     @Res() res: Response,
-    @Body() createProductDto: CreateProductDto) {
-    const data = await this.appService.create(createProductDto);
+    @Body(new ZodValidationPipe(createProductSchema)) createProductDto: CreateProductDto,
+    @CurrentUser() user: UserPayload
+  ) {
+    const data = await this.appService.create(createProductDto, user);
     return convertResponse(res, data)
   }
 
@@ -36,11 +44,14 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   async updateProduct(
     @Res() res: Response,
     @Body(new ZodValidationPipe(updateProductSchema)) body: UpdateProductDto,
-    @Param('id') id: string) {
-    const data=  await this.appService.updateProduct(id, body);
+    @Param('id') id: string,
+    @CurrentUser() user: UserPayload
+  ) {
+    const data = await this.appService.updateProduct({ id, body, user });
     return convertResponse(res, data)
   }
 }

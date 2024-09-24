@@ -19,7 +19,8 @@
       "@lib/helper": ["libs/helper/src/index.ts"],
       "@lib/schema": ["libs/schema/src/index.ts"],
       "@lib/types": ["libs/types/src/index.ts"],
-      "@lib/utils": ["libs/utils/src/index.ts"]
+      "@lib/utils": ["libs/utils/src/index.ts"],
+      "@nestjs-scaffold/events": ["libs/events/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

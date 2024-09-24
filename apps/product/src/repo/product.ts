@@ -1,8 +1,8 @@
-import { KyselyService } from "@lib/database";
-import { Injectable } from "@nestjs/common";
-import { DB } from "../types/database";
+import { KyselyService } from '@lib/database';
+import { Injectable } from '@nestjs/common';
+import { DB } from '../types/database';
 import { CreateProductDto, UpdateProductDto } from '@lib/schema';
-import {randomUUID} from 'crypto'
+import { randomUUID } from 'crypto';
 
 
 @Injectable()
@@ -16,27 +16,31 @@ export class ProductRepo {
       .executeTakeFirst()
   }
 
-  async createProduct(productDetails: CreateProductDto) {
-    return this.client
+  async createProduct(productDetails: CreateProductDto, userId: string) {
+    const id = randomUUID();
+    await this.client
       .insertInto('Product')
-      .values({ ...productDetails, id: randomUUID(), userId: '12345',  price: productDetails.price.toString() })
-      // .returning([
-      //   'id',
-      //   'userId',
-      //   'name',
-      //   'description',
-      //   'isInStock',
-      //   'productImage',
-      //   'price',
-      // ])
+      .values({ ...productDetails, id, userId, price: productDetails.price.toString() })
       .executeTakeFirst()
+
+    return this.client
+      .selectFrom('Product')
+      .selectAll()
+      .where('id', '=', id)
+      .executeTakeFirstOrThrow();
   }
 
   async fetchAll() {
-    return this.client.selectFrom('Product').select(['id', 'userId', 'name', 'productImage', 'quantity', 'price']).execute()
+    return this.client.selectFrom('Product')
+      .select(['id', 'userId', 'name', 'productImage', 'quantity', 'price'])
+      .execute()
   }
 
-  async updateProduct(id: string, body: UpdateProductDto) {
-    return this.client.updateTable('Product').set(body).where('id', '=', id).returningAll().executeTakeFirst()
+  async updateProduct({ id, body, userId }: { id: string; body: UpdateProductDto; userId: string }) {
+    return this.client.updateTable('Product')
+      .set(body)
+      .where('id', '=', id)
+      .where('userId', '=', userId)
+      .executeTakeFirst()
   }
 }

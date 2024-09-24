@@ -16,6 +16,15 @@ export type Product = {
   created_at: Generated<Timestamp>;
   updated_at: Timestamp | null;
 };
+export type User = {
+  id: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  created_at: Generated<Timestamp>;
+  updated_at: Timestamp | null;
+};
 export type DB = {
   Product: Product;
+  User: User;
 };

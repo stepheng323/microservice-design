@@ -9,6 +9,8 @@ import { ProductModule } from './product/product.module';
 import { RepositoryModule } from './repo/repo.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from '@lib/utils';
+import { RabbitMQService } from '@nestjs-scaffold/events';
+import { UserCreatedListener } from './events';
 
 @Module({
   imports: [
@@ -20,11 +22,13 @@ import { LoggingInterceptor } from '@lib/utils';
       user: process.env.DB_USER
     }),
     ProductModule,
-    RepositoryModule,
+    RepositoryModule
   ],
   controllers: [ProductController],
   providers: [
     ProductService,
+    RabbitMQService,
+    UserCreatedListener,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,

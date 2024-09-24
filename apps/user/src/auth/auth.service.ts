@@ -4,10 +4,14 @@ import { CreateUserDto, LoginDto } from '@lib/schema';
 import {UserRepo} from '../repo/user.repo'
 import { hash, match } from '@lib/helper';
 import { sign } from '@lib/utils';
+import { RabbitMQService } from "@nestjs-scaffold/events";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepo: UserRepo) { }
+  constructor(
+    private readonly userRepo: UserRepo,
+    private messagingService: RabbitMQService
+  ) { }
 
   async signup(createUserDto: CreateUserDto): Promise<IServiceHelper> {
 
@@ -22,6 +26,9 @@ export class AuthService {
       password: hashedPassword
     })
     const token = await sign({id: user.id, email:user.email})
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {profileImage, phoneNumber, ...userData}= user
+    await this.messagingService.publishEvent('user.created',userData)
     return {
       status: 'successful',
       message: 'User signup successful',
