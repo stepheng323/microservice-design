@@ -1,12 +1,15 @@
 services:
   user:
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     build:
       context: .
-      dockerfile: ./apps/user/Dockerfile
+      dockerfile: apps/user/Dockerfile.dev
       args:
         - SERVICE_NAME=user
+    volumes:
+      - .:/app
+      - /app/node_modules
     command: bash -c "npx nx run user:prisma-migrate --name=update && npx nx serve user --host 0.0.0.0"
     ports:
       - "4000:4000"
@@ -28,12 +31,15 @@ services:
 
   product:
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     build:
-      context: ./
-      dockerfile: ./apps/product/Dockerfile
+      context: .
+      dockerfile: apps/product/Dockerfile.dev
       args:
         - SERVICE_NAME=product
+    volumes:
+      - .:/app
+      - /app/node_modules
     command: bash -c "npx nx run product:prisma-migrate --name=update && npx nx serve product --host 0.0.0.0"
     ports:
       - "4001:4001"
@@ -59,9 +65,12 @@ services:
       NODE_ENV: production
     build:
       context: .
-      dockerfile: ./apps/order/Dockerfile
+      dockerfile: apps/order/Dockerfile
       args:
         - SERVICE_NAME=order
+    volumes:
+      - .:/app
+      - /app/node_modules
     command: bash -c "npx nx run order:prisma-migrate --name=update && npx nx serve order --host 0.0.0.0"
     ports:
       - "4002:4002"

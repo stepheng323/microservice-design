@@ -6,23 +6,23 @@ COPY ./package*.json ./
 
 RUN npm install
 
-COPY ./nx.json ./
+COPY /apps/user ./apps/user
 COPY ./libs ./libs
-COPY /apps/order ./apps/order
 
+COPY ./nx.json ./
 COPY tsconfig.base.json ./
 COPY .env .env
 
+
 RUN npx nx reset
-RUN npx nx run order:build
+RUN npx nx run user:build
 
 FROM node:22
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/apps/order /app
+COPY --from=builder /app/dist/apps/user /app
 
+EXPOSE 4000
 
-EXPOSE 4002
-
-CMD ["node", "dist/apps/order/main.js"]
+CMD ["node", "dist/apps/user/main.js"]
