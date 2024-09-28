@@ -1,0 +1,14 @@
+
+[36m>[39m [7m[1m[36m Migrating Database [39m[22m[27m
+
+[2mEnvironment variables loaded from .env[22m
+[2mPrisma schema loaded from prisma/schema.prisma[22m
+[2mDatasource "db": MySQL database "product_db" at "product-db:3306"[22m
+
+Already in sync, no schema change or pending migration was found.
+
+Running generate... [2m(Use --skip-generate to skip the generators)[22m
+[2K[1A[2K[GRunning generate... - Kysely types
+[2K[1A[2K[G✔ Generated [1mKysely types[22m (1.8.0)[2m to ./src/types[22m in 996ms
+
+

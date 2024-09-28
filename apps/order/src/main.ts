@@ -1,27 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
-import { ConfigService } from '@nestjs/config';
-import { getRabbitMQConfig } from '@nestjs-scaffold/events';
-import { MicroserviceOptions } from '@nestjs/microservices';
+import { OrderModule } from './app/order.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  const configService = app.get(ConfigService);
-
-  const rabbitMQConfig =  getRabbitMQConfig(configService);
-
-  const uniqueQueueName = 'order-queue';
-
-  app.connectMicroservice<MicroserviceOptions>({
-    ...rabbitMQConfig,
-    options: {
-      ...rabbitMQConfig.options,
-      queue: uniqueQueueName,
-    },
-  } as MicroserviceOptions);
+  const app = await NestFactory.create(OrderModule);
 
   const globalPrefix = 'order';
   app.setGlobalPrefix(globalPrefix);

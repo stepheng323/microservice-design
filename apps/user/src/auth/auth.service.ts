@@ -4,39 +4,42 @@ import { CreateUserDto, LoginDto } from '@lib/schema';
 import {UserRepo} from '../repo/user.repo'
 import { hash, match } from '@lib/helper';
 import { sign } from '@lib/utils';
-import { RabbitMQService } from "@nestjs-scaffold/events";
+import { PublisherUserCreated } from '../event/publisher/userCreatedPublisher';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepo: UserRepo,
-    private messagingService: RabbitMQService
+    private userCreatedPublisher: PublisherUserCreated
   ) { }
 
   async signup(createUserDto: CreateUserDto): Promise<IServiceHelper> {
-
     const userExist = await this.userRepo.getUserByEmail(createUserDto.email);
     if (userExist) return {
       status: 'conflict',
       message: 'You already have an account with us, please consider login in'
     }
     const hashedPassword =await hash(createUserDto.password);
+
     const user = await this.userRepo.createUser({
       ...createUserDto,
       password: hashedPassword
     })
+
     const token = await sign({id: user.id, email:user.email})
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {profileImage, phoneNumber, ...userData}= user
-    await this.messagingService.publishEvent('user.created',userData)
+    const { profileImage, phoneNumber, ...userData}= user
+
+    this.userCreatedPublisher.emit(userData)
     return {
       status: 'successful',
       message: 'User signup successful',
       data: {...user, token}
     }
   }
-  async login(loginDto: LoginDto): Promise<IServiceHelper> {
 
+  async login(loginDto: LoginDto): Promise<IServiceHelper> {
     const user = await this.userRepo.getUserByEmail(loginDto.email);
     if (!user) return {
       status: 'not-found',

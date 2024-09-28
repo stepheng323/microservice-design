@@ -3,17 +3,20 @@ import { connect, Connection, Channel, ConsumeMessage } from 'amqplib';
 
 @Injectable()
 export abstract class BaseRabbitMQListener implements OnModuleInit, OnModuleDestroy {
-  protected connection: Connection;
-  protected channel: Channel;
-  protected queueName = 'product_queue';
-  protected exchangeName = 'order_exchange';
+  protected connection: Connection | undefined;
+  protected channel: Channel | undefined;
 
+  protected abstract queueName:string
+  protected abstract exchangeName: string
   protected abstract routingKey: string;
   protected abstract handleMessage(content: unknown): void;
 
   async onModuleInit() {
-    this.connection = await connect('amqp://localhost:5672');
+    this.connection = await connect(process.env?.['RABBITMQ_URL'] as string);
     this.channel = await this.connection.createChannel();
+    await this.channel.assertExchange(this.exchangeName, 'topic', {
+      durable: true
+    });
 
     await this.channel.assertQueue(this.queueName, { durable: false });
     await this.channel.bindQueue(this.queueName, this.exchangeName, this.routingKey);
@@ -22,7 +25,8 @@ export abstract class BaseRabbitMQListener implements OnModuleInit, OnModuleDest
         const content = JSON.parse(msg.content.toString());
         Logger.log(`Received message on ${this.queueName}:`, content);
         this.handleMessage(content);
-        this.channel.ack(msg);
+        if(this.channel)
+          this.channel.ack(msg);
       }
     });
     Logger.log(
@@ -31,7 +35,9 @@ export abstract class BaseRabbitMQListener implements OnModuleInit, OnModuleDest
   }
 
   async onModuleDestroy() {
+    if (this.channel)
     await this.channel.close();
+    if (this.connection)
     await this.connection.close();
   }
 }

@@ -1,0 +1,13 @@
+# Ignore node_modules
+node_modules
+
+# Ignore test results
+coverage
+test-results
+
+.vscode
+tmp
+.idea
+
+# Ignore other build artifacts
+dist/

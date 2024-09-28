@@ -16,6 +16,7 @@ export type Order = {
   productId: string;
   userId: string;
   amount: string;
+  quantity: number;
   status: Generated<OrderStatus>;
   created_at: Generated<Timestamp>;
   updated_at: Timestamp | null;

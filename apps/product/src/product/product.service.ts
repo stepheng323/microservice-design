@@ -3,18 +3,18 @@ import { IServiceHelper } from '@lib/types';
 import { ProductRepo } from '../repo/product';
 import { CreateProductDto, UpdateProductDto } from '@lib/schema';
 import { UserPayload } from '@lib/types';
-import { RabbitMQService } from '@nestjs-scaffold/events';
+import { PublishProductCreated } from '../events';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepo,
-    private readonly messageService: RabbitMQService,
+    private readonly productCreated: PublishProductCreated,
   ) {
   }
   async create(productDto: CreateProductDto, user: UserPayload): Promise<IServiceHelper> {
     const product = await this.productRepository.createProduct(productDto, user.id)
-    await this.messageService.publishEvent('product.created', product);
+     this.productCreated.emit(product);
     return {
       status: 'created',
       message: 'Product created successfully',

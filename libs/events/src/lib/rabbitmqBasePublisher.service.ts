@@ -2,23 +2,25 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { connect, Connection, Channel } from 'amqplib';
 
 @Injectable()
-export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
+export abstract class RabbitmqBasePublisherService implements OnModuleInit, OnModuleDestroy {
   private connection: Connection | undefined;
   private channel: Channel | undefined;
-    private exchange = 'order_exchange'
+
+  protected abstract exchange: string
+  protected abstract emit(payload: unknown): void;
 
   async onModuleInit() {
-    this.connection = await connect('amqp://localhost:5672');
+    this.connection = await connect(process.env?.['RABBITMQ_URL'] as string);
     this.channel = await this.connection.createChannel();
     await this.channel.assertExchange(this.exchange, 'topic', {
-      durable: true,
+      durable: true
     });
   }
 
-  async publishEvent(eventType: string, payload: unknown) {
+  protected publishEvent(eventType: string, payload: unknown) {
     if (this.channel) {
       this.channel.publish(this.exchange, eventType, Buffer.from(JSON.stringify(payload)), {
-        persistent: true,
+        persistent: true
       });
     } else {
       console.error('Channel is not defined');

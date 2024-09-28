@@ -1,2 +1,2 @@
-export * from './rabbitMQ.service'
-export * from './userCreatedListener'
+export * from './publishers/productCreatedPublisher'
+export * from './listeners/userCreatedListener'

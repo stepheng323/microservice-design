@@ -8,7 +8,11 @@ import config from './config/config'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true, load: [config]}),
+    ConfigModule.forRoot(
+      {isGlobal: true,
+        load: [config],
+        envFilePath: ['../.env'],
+      }),
     DatabaseModule.forRoot(process.env.DATABASE_URL),
     RepositoryModule,
     AuthModule,

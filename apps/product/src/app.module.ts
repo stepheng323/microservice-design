@@ -9,12 +9,16 @@ import { ProductModule } from './product/product.module';
 import { RepositoryModule } from './repo/repo.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from '@lib/utils';
-import { RabbitMQService } from '@nestjs-scaffold/events';
-import { UserCreatedListener } from './events';
+import { PublishProductCreated, UserCreatedListener } from './events';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+      envFilePath: ['../.env'],
+
+    }),
     DatabaseModule.forRoot({
       database: process.env.DB_NAME,
       host: process.env.DB_HOST,
@@ -27,8 +31,8 @@ import { UserCreatedListener } from './events';
   controllers: [ProductController],
   providers: [
     ProductService,
-    RabbitMQService,
     UserCreatedListener,
+    PublishProductCreated,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,

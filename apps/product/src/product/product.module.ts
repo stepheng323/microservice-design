@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
-import { RabbitMQService } from '@nestjs-scaffold/events';
-
+import { PublishProductCreated } from '../events';
 
 @Module({
-  imports: [],
   controllers: [ProductController],
-  exports: [],
-  providers: [
-    ProductService,
-    RabbitMQService,
-  ],
+  providers: [ProductService, PublishProductCreated],
 })
-
 
 export class ProductModule { }

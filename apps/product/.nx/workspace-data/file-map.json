@@ -1,0 +1,142 @@
+{
+  "version": "6.0",
+  "nxVersion": "19.6.5",
+  "deps": {},
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {
+      "product": [
+        {
+          "file": ".eslintrc.json",
+          "hash": "13800677001662881425"
+        },
+        {
+          "file": ".gitignore",
+          "hash": "12975187279384539528"
+        },
+        {
+          "file": "Dockerfile",
+          "hash": "11168839503760919167"
+        },
+        {
+          "file": "jest.config.ts",
+          "hash": "4973227744537446670"
+        },
+        {
+          "file": "prisma/migrations/20240909231654_create_product_table/migration.sql",
+          "hash": "18104950532671372057"
+        },
+        {
+          "file": "prisma/migrations/20240909231748_update_product_table/migration.sql",
+          "hash": "18255813145350854913"
+        },
+        {
+          "file": "prisma/migrations/20240909233252_update_product_table/migration.sql",
+          "hash": "7555673594060526781"
+        },
+        {
+          "file": "prisma/migrations/20240910141054_update_product_table/migration.sql",
+          "hash": "9235621242543669898"
+        },
+        {
+          "file": "prisma/migrations/20240924090617_add_user_table/migration.sql",
+          "hash": "2337101068971312578"
+        },
+        {
+          "file": "prisma/migrations/migration_lock.toml",
+          "hash": "8877461730101463416"
+        },
+        {
+          "file": "prisma/schema.prisma",
+          "hash": "1011231932332433113"
+        },
+        {
+          "file": "project.json",
+          "hash": "14313568992430023979"
+        },
+        {
+          "file": "src/app.module.ts",
+          "hash": "4573499389985396378"
+        },
+        {
+          "file": "src/config/config.ts",
+          "hash": "17969039210507567897"
+        },
+        {
+          "file": "src/config/index.ts",
+          "hash": "5285580242098292622"
+        },
+        {
+          "file": "src/config/schema.ts",
+          "hash": "1087187955890400683"
+        },
+        {
+          "file": "src/database/database.ts",
+          "hash": "11441966167966325821"
+        },
+        {
+          "file": "src/events/index.ts",
+          "hash": "6409942434096293242"
+        },
+        {
+          "file": "src/events/listeners/userCreatedListener.ts",
+          "hash": "17270485470345676189"
+        },
+        {
+          "file": "src/events/publishers/productCreatedPublisher.ts",
+          "hash": "5982797515802490780"
+        },
+        {
+          "file": "src/main.ts",
+          "hash": "10446571257664537282"
+        },
+        {
+          "file": "src/product/product.controller.ts",
+          "hash": "1315347253655079530"
+        },
+        {
+          "file": "src/product/product.module.ts",
+          "hash": "3731435877275247954"
+        },
+        {
+          "file": "src/product/product.service.ts",
+          "hash": "13193598913616728541"
+        },
+        {
+          "file": "src/repo/product.ts",
+          "hash": "4145342518555374103"
+        },
+        {
+          "file": "src/repo/repo.module.ts",
+          "hash": "10680453769926592997"
+        },
+        {
+          "file": "src/repo/user.repo.ts",
+          "hash": "15602643804545803296"
+        },
+        {
+          "file": "src/types/database.ts",
+          "hash": "3236309824479238822"
+        },
+        {
+          "file": "tsconfig.app.json",
+          "hash": "3171572500325445971"
+        },
+        {
+          "file": "tsconfig.json",
+          "hash": "16699038718084928346"
+        },
+        {
+          "file": "tsconfig.spec.json",
+          "hash": "11550347367511341917"
+        },
+        {
+          "file": "webpack.config.js",
+          "hash": "8659040069153703273"
+        }
+      ]
+    },
+    "nonProjectFiles": []
+  }
+}

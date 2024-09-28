@@ -19,3 +19,4 @@ export const loginSchema = z
   })
 
 export type LoginDto = z.infer<typeof loginSchema>;
+
