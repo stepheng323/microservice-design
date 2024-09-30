@@ -11,7 +11,7 @@ import config from './config/config'
     ConfigModule.forRoot(
       {isGlobal: true,
         load: [config],
-        envFilePath: ['../.env'],
+        envFilePath: ['../.env.product.user'],
       }),
     DatabaseModule.forRoot(process.env.DATABASE_URL),
     RepositoryModule,

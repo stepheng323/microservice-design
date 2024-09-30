@@ -23,11 +23,11 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@nestjs/swagger": "^7.4.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.0.1",
-    "@nestjs/swagger": "^7.4.0",
     "@nestjs/testing": "^10.0.2",
     "@nx-tools/nx-prisma": "^6.1.0",
     "@nx/eslint": "19.6.5",

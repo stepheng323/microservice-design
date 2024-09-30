@@ -16,7 +16,7 @@ import { PublishProductCreated, UserCreatedListener } from './events';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
-      envFilePath: ['../.env'],
+      envFilePath: ['../.env.product.user'],
 
     }),
     DatabaseModule.forRoot({

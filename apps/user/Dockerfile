@@ -1,4 +1,4 @@
-FROM node:22 AS builder
+FROM node:alpine AS builder
 
 WORKDIR /app
 
@@ -6,23 +6,22 @@ COPY ./package*.json ./
 
 RUN npm install
 
-COPY /apps/user ./apps/user
-COPY ./libs ./libs
+COPY . .
 
-COPY ./nx.json ./
-COPY tsconfig.base.json ./
-COPY .env .env
-
-
-RUN npx nx reset
 RUN npx nx run user:build
 
-FROM node:22
+FROM node:alpine
 
 WORKDIR /app
 
 COPY --from=builder /app/dist/apps/user /app
+COPY --from=builder /app/package*.json ./
+
+RUN apk add --no-cache make gcc g++ python3
+RUN apk add --no-cache bash
+
+RUN npm install --only=production
 
 EXPOSE 4000
 
-CMD ["node", "dist/apps/user/main.js"]
+CMD ["node", "main.js"]
