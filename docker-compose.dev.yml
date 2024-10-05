@@ -106,6 +106,7 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
 
+
 volumes:
   user-data:
   product-data:
