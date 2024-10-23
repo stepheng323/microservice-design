@@ -126,8 +126,6 @@ services:
         - SERVICE_NAME=migration
     command: >
       bash -c "
-      echo 'Waiting for database...' &&
-      sleep 10 &&
       npx nx run user:prisma-migrate --name=update &&
       npx nx run order:prisma-migrate --name=update &&
       npx nx run product:prisma-migrate --name=update &&
