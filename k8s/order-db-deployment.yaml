@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-db
+  template:
+    metadata:
+      labels:
+        app: order-db
+    spec:
+      containers:
+        - name: order-db
+          image: postgres:alpine
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: order-app-secret
+                  key: ORDER_DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: order-app-secret
+                  key: ORDER_DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: order-app-secret
+                  key: ORDER_DB_PASSWORD
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: order-db-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-db-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    app: order-db
+  ports:
+    - port: 5432
+      targetPort: 5432
