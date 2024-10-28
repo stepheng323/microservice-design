@@ -19,22 +19,28 @@ spec:
             - name: RABBITMQ_URL
               value: amqp://guest:guest@rabbitmq-cluster-ip:5672
 
-            - name:  EXCHANGE_NAME
+            - name: EXCHANGE_NAME
               value: e_commerce
 
-            - name:  PORT
+            - name: PORT
               value: '4000'
 
-            - name:  QUEUE_NAME
+            - name: QUEUE_NAME
               value: user_queue
 
+            - name: USER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-app-secret
+                  key: USER_DB_PASSWORD
+
             - name: DATABASE_URL
-              value: postgresql://$(USER_DB_USER):$(USER_DB_PASSWORD)@user-db-cluster-ip:5432/$(USER_DB_NAME)
+              value: postgresql://postgres:$(USER_DB_PASSWORD)@user-db-cluster-ip:5432/postgres
 
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: "general-secret"
+                  name: general-secret
                   key: JWT_SECRET
           imagePullPolicy: Never
           ports:
@@ -52,8 +58,3 @@ spec:
   ports:
     - port: 4000
       targetPort: 4000
-
-
-
-
-

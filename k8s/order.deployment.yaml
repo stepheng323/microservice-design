@@ -29,12 +29,12 @@ spec:
               value: order_queue
 
             - name: DATABASE_URL
-              value: postgresql://$(USER_DB_USER):$(USER_DB_PASSWORD)@order-db-cluster-ip:5432/$(USER_DB_NAME)
+              value: postgresql://postgres:$(USER_DB_PASSWORD)@order-db-cluster-ip:5432/postgres
 
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: "general-secret"
+                  name: general-secret
                   key: JWT_SECRET
           imagePullPolicy: Never
           ports:

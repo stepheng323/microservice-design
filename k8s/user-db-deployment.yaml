@@ -24,16 +24,6 @@ spec:
                 secretKeyRef:
                   name: user-app-secret
                   key: USER_DB_NAME
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: user-app-secret
-                  key: USER_DB_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: user-app-secret
-                  key: USER_DB_PASSWORD
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
