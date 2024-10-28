@@ -49,8 +49,6 @@ jobs:
           context: .
           file: ./apps/user/Dockerfile
           push: true
-          tags: |
-            stepheng323/user-service:${{ github.sha }}
-            stepheng323/user-service:latest
+          tags: stepheng323/user-service:latest
           cache-from: type=registry,ref=stepheng323/user-service:buildcache
           cache-to: type=registry,ref=stepheng323/user-service:buildcache,mode=max
