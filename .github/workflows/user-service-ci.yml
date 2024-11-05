@@ -8,6 +8,8 @@ on:
       - 'libs/**'
       - 'package.json'
       - 'nx.json'
+      - 'k8s/**'
+
   pull_request:
     branches: [ main ]
     paths:
@@ -15,6 +17,7 @@ on:
       - 'libs/**'
       - 'package.json'
       - 'nx.json'
+      - 'k8s/**'
 
 jobs:
   build:
@@ -66,6 +69,6 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region us-east-1
 
       - name: Deploy to EKS
-        run: kubectl apply -f ./apps/user/k8s
+        run: kubectl apply -f ./k8s
 
 
