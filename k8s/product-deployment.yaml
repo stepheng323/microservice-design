@@ -55,7 +55,6 @@ spec:
                 secretKeyRef:
                   name: "product-app-secret"
                   key: PRODUCT_DB_PASSWORD
-          imagePullPolicy: Never
           ports:
             - containerPort: 4001
 

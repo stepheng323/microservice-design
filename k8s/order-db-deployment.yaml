@@ -15,7 +15,6 @@ spec:
       containers:
         - name: order-db
           image: postgres:alpine
-          imagePullPolicy: Never
           ports:
             - containerPort: 5432
           env:

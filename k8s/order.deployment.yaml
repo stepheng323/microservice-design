@@ -36,7 +36,6 @@ spec:
                 secretKeyRef:
                   name: general-secret
                   key: JWT_SECRET
-          imagePullPolicy: Never
           ports:
             - containerPort: 4002
 
