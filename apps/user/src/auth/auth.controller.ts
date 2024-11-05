@@ -32,3 +32,5 @@ export class AuthController {
     return convertResponse(res, { data: {}, message: 'working', status: 'successful' })
   }
 }
+
+
