@@ -18,11 +18,11 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: user-app-secret
-                  key: USER_DB_NAME
+                  key: USER_DB_PASSWORD
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
