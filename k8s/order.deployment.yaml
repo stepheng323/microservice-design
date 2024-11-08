@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: order-app
-          image: nestjs-scaffold-order
+          image: stepheng323/order-service
           env:
             - name: RABBITMQ_URL
               value: amqp://guest:guest@rabbitmq-cluster-ip:5672
