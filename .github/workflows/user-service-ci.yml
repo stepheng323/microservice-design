@@ -84,7 +84,7 @@ jobs:
           kubectl run user-migration-${{ github.sha }} \
             --image=stepheng323/user-service:${{ github.sha }} \
             --restart=Never \
-            --command -- npm run migrate
+            --command -- npx nx run user:prisma-migrate
             kubectl wait --for=condition=complete pod/user-migration-${{ github.sha }} --timeout=5m || {
               echo "Migration failed. Checking logs..."
               kubectl logs user-migration-${{ github.sha }}
