@@ -170,8 +170,8 @@ jobs:
           kubectl apply -f ./k8s
 
           # Wait for deployment to roll out
-          kubectl rollout status deployment/user-service -n default --timeout=5m || {
+          kubectl rollout status deployment/user-deployment -n default --timeout=5m || {
             echo "Deployment failed. Rolling back..."
-            kubectl rollout undo deployment/user-service -n default
+            kubectl rollout undo deployment/deployment -n default
             exit 1
           }
