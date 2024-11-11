@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker images
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -63,20 +63,22 @@ jobs:
           cache-from: type=registry,ref=stepheng323/user-service:buildcache
           cache-to: type=registry,ref=stepheng323/user-service:buildcache,mode=max
 
+      - name: Build migration image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.migration
+          push: true
+          tags: |
+            stepheng323/migration:${{ github.sha }}
+          cache-from: type=registry,ref=stepheng323/user-migration:buildcache
+          cache-to: type=registry,ref=stepheng323/user-migration:buildcache,mode=max
+
   migrate:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -90,15 +92,12 @@ jobs:
 
       - name: Run migrations
         run: |
-          # Build migration-only image
-          docker build -t user-migration -f Dockerfile.migration .
-
           # Run migration job
           cat <<EOF | kubectl apply -f -
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: user-migration-${{ github.sha }}
+            name: migration-${{ github.sha }}
           spec:
             ttlSecondsAfterFinished: 300
             backoffLimit: 2
@@ -106,8 +105,8 @@ jobs:
               spec:
                 containers:
                 - name: migration
-                  image: user-migration
-                  command: ["npx", "nx", "run", "user:prisma-migrate", "--name=update"]
+                  image: stepheng323/migration:${{ github.sha }}
+                  command: ["npx", "nx", "run", "user:prisma-migrate"]
                   resources:
                     limits:
                       memory: "512Mi"
@@ -118,6 +117,7 @@ jobs:
                   env:
                     - name: NODE_ENV
                       value: "production"
+                    # Add any other necessary environment variables from secrets
                 restartPolicy: Never
           EOF
 
@@ -125,25 +125,25 @@ jobs:
           echo "Waiting for migration job to complete..."
           if ! kubectl wait --for=condition=complete job/user-migration-${{ github.sha }} --timeout=5m; then
             echo "Migration failed. Fetching logs..."
-            kubectl logs -l job-name=user-migration-${{ github.sha }}
+            kubectl logs -l job-name=migration-${{ github.sha }}
 
             echo "Checking if there were any database conflicts..."
-            if kubectl logs -l job-name=user-migration-${{ github.sha }} | grep -i "conflict"; then
+            if kubectl logs -l job-name=migration-${{ github.sha }} | grep -i "conflict"; then
               echo "Database conflict detected. Manual intervention required."
             fi
 
             echo "Cleaning up failed migration job..."
-            kubectl delete job user-migration-${{ github.sha }}
+            kubectl delete job migration-${{ github.sha }}
             exit 1
           fi
 
           # Log successful migration
           echo "Migration completed successfully. Fetching logs..."
-          kubectl logs -l job-name=user-migration-${{ github.sha }}
+          kubectl logs -l job-name=migration-${{ github.sha }}
 
           # Cleanup
           echo "Cleaning up migration job..."
-          kubectl delete job user-migration-${{ github.sha }}
+          kubectl delete job migration-${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
