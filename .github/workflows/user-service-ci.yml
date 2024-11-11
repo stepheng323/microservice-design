@@ -12,9 +12,8 @@ on:
       - 'k8s/**'
       - '.github/workflows/user-service-ci.yml'
 
-
   pull_request:
-    branches: 
+    branches:
       - main
     paths:
       - 'apps/user-service/**'
@@ -25,6 +24,7 @@ on:
       - '.github/workflows/user-service-ci.yml'
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -90,24 +90,68 @@ jobs:
 
       - name: Run migrations
         run: |
-          kubectl run user-migration-${{ github.sha }} \
-            --image=stepheng323/user-service:${{ github.sha }} \
-            --restart=Never \
-            --command -- npx nx run user:prisma-migrate
-            kubectl wait --for=condition=complete pod/user-migration-${{ github.sha }} --timeout=5m || {
-              echo "Migration failed. Checking logs..."
-              kubectl logs user-migration-${{ github.sha }}
-              kubectl delete pod user-migration-${{ github.sha }}
-              exit 1
-            }
-            echo "Migration completed. Checking logs..."
-            kubectl logs user-migration-${{ github.sha }}
-            kubectl delete pod user-migration-${{ github.sha }}
+          # Build migration-only image
+          docker build -t user-migration -f Dockerfile.migration .
+
+          # Run migration job
+          cat <<EOF | kubectl apply -f -
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: user-migration-${{ github.sha }}
+          spec:
+            ttlSecondsAfterFinished: 300
+            backoffLimit: 2
+            template:
+              spec:
+                containers:
+                - name: migration
+                  image: user-migration
+                  command: ["npx", "nx", "run", "user:prisma-migrate", "--name=update"]
+                  resources:
+                    limits:
+                      memory: "512Mi"
+                      cpu: "500m"
+                    requests:
+                      memory: "256Mi"
+                      cpu: "250m"
+                  env:
+                    - name: NODE_ENV
+                      value: "production"
+                restartPolicy: Never
+          EOF
+
+          # Wait for job to complete and handle errors
+          echo "Waiting for migration job to complete..."
+          if ! kubectl wait --for=condition=complete job/user-migration-${{ github.sha }} --timeout=5m; then
+            echo "Migration failed. Fetching logs..."
+            kubectl logs -l job-name=user-migration-${{ github.sha }}
+
+            echo "Checking if there were any database conflicts..."
+            if kubectl logs -l job-name=user-migration-${{ github.sha }} | grep -i "conflict"; then
+              echo "Database conflict detected. Manual intervention required."
+            fi
+
+            echo "Cleaning up failed migration job..."
+            kubectl delete job user-migration-${{ github.sha }}
+            exit 1
+          fi
+
+          # Log successful migration
+          echo "Migration completed successfully. Fetching logs..."
+          kubectl logs -l job-name=user-migration-${{ github.sha }}
+
+          # Cleanup
+          echo "Cleaning up migration job..."
+          kubectl delete job user-migration-${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: [build, migrate]
+    environment: production
     steps:
+      - uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -119,4 +163,13 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region us-east-1
 
       - name: Deploy to EKS
-        run: kubectl apply -f ./k8s
+        run: |
+          # Apply configurations
+          kubectl apply -f ./k8s
+
+          # Wait for deployment to roll out
+          kubectl rollout status deployment/user-service -n default --timeout=5m || {
+            echo "Deployment failed. Rolling back..."
+            kubectl rollout undo deployment/user-service -n default
+            exit 1
+          }
