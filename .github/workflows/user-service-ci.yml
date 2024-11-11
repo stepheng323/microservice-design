@@ -106,7 +106,7 @@ jobs:
                 containers:
                 - name: migration
                   image: stepheng323/migration:${{ github.sha }}
-                  command: ["npx", "nx", "run", "user:prisma-migrate"]
+                  command: ["npx", "nx", "run", "user:prisma-migrate", "--name=update"]
                   resources:
                     limits:
                       memory: "512Mi"
