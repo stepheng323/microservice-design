@@ -115,13 +115,12 @@ jobs:
                       memory: "256Mi"
                       cpu: "250m"
                   env:
-                    - name: USER_DB_PASSWORD
+                    - name: DATABASE_URL
                       valueFrom:
                         secretKeyRef:
                           name: user-app-secret
-                          key: USER_DB_PASSWORD
-                    - name: DATABASE_URL
-                      value: "postgresql://postgres:$(USER_DB_PASSWORD)@user-db-cluster-ip:5432/postgres"                restartPolicy: Never
+                          key: DATABASE_URL
+          restartPolicy: Never
           EOF
 
           # Wait for job to complete and handle errors
