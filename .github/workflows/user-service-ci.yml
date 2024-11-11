@@ -103,6 +103,7 @@ jobs:
             backoffLimit: 2
             template:
               spec:
+                restartPolicy: Never
                 containers:
                 - name: migration
                   image: stepheng323/migration:${{ github.sha }}
@@ -120,7 +121,6 @@ jobs:
                         secretKeyRef:
                           name: user-app-secret
                           key: DATABASE_URL
-          restartPolicy: Never
           EOF
 
           # Wait for job to complete and handle errors
