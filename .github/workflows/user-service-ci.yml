@@ -71,8 +71,8 @@ jobs:
           push: true
           tags: |
             stepheng323/migration:${{ github.sha }}
-          cache-from: type=registry,ref=stepheng323/user-migration:buildcache
-          cache-to: type=registry,ref=stepheng323/user-migration:buildcache,mode=max
+          cache-from: type=registry,ref=stepheng323/migration:buildcache
+          cache-to: type=registry,ref=stepheng323/migration:buildcache,mode=max
 
   migrate:
     runs-on: ubuntu-latest
@@ -123,7 +123,7 @@ jobs:
 
           # Wait for job to complete and handle errors
           echo "Waiting for migration job to complete..."
-          if ! kubectl wait --for=condition=complete job/user-migration-${{ github.sha }} --timeout=5m; then
+          if ! kubectl wait --for=condition=complete job/migration-${{ github.sha }} --timeout=5m; then
             echo "Migration failed. Fetching logs..."
             kubectl logs -l job-name=migration-${{ github.sha }}
 
