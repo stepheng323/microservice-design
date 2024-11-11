@@ -115,9 +115,13 @@ jobs:
                       memory: "256Mi"
                       cpu: "250m"
                   env:
-                    - name: NODE_ENV
-                      value: "production"
-                    # Add any other necessary environment variables from secrets
+                    - name: USER_DB_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: user-app-secret
+                          key: USER_DB_PASSWORD
+                    - name: DATABASE_URL
+                      value: postgresql://postgres:$(USER_DB_PASSWORD)@user-db-cluster-ip:5432/postgres
                 restartPolicy: Never
           EOF
 
