@@ -29,7 +29,10 @@ spec:
               value: order_queue
 
             - name: DATABASE_URL
-              value: postgresql://postgres:$(USER_DB_PASSWORD)@order-db-cluster-ip:5432/postgres
+              valueFrom:
+                secretKeyRef:
+                  name:  user-app-secret
+                  key: DATABASE_URL
 
             - name: JWT_SECRET
               valueFrom:
